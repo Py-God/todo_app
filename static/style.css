@@ -1,3 +1,33 @@
 body {
     font-family: "Exo 2", sans-serif;
+    background-color: #874f41;
+    color: white;
+}
+
+.navbar {
+    background: #244855;
+}
+.navbar-brand {
+    color: white;
+}
+
+.navbar-brand:hover {
+    color: #fbe9d0;
+}
+
+.navbar-brand:visited {
+    color: white;
+}
+
+.form-control, .form-control:focus {
+    background-color: #90AEAD;
+    border: none;
+}
+
+.btn {
+    background-color: #ed4833;
+}
+
+.btn:hover {
+    background-color: #244855;
 }

@@ -22,13 +22,14 @@ def after_request(response):
     return response
 
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/", methods=["GET", "POST"])
 def login():
+    # clear session id: forget any previous user
     session.clear()
 
+    # TODO write login logic
+
+    # Remember which user has logged in
+    
+
     return render_template("login.html")
-
-
-@app.route("/")
-def index():
-    return render_template("layout.html")
