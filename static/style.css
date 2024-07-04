@@ -6,16 +6,17 @@ body {
 
 .navbar {
     background: #244855;
+    margin-bottom: 10px;
 }
-.navbar-brand {
+.navbar-brand, .nav-link {
     color: white;
 }
 
-.navbar-brand:hover {
+.navbar-brand:hover, .nav-link:hover {
     color: #fbe9d0;
 }
 
-.navbar-brand:visited {
+.navbar-brand:visited, .nav-link:hover {
     color: white;
 }
 
