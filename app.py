@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from flask import (
     abort,
     Flask,
@@ -8,6 +9,7 @@ from flask import (
     )
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
+from helper import login_required
 import re
 from sqlalchemy import func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
@@ -35,6 +37,17 @@ class User(db.Model):
 
     def __repr__(self):
         return f"<User {self.id}>"
+    
+
+class Task(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(unique=True, nullable=False)
+    time: Mapped[str] = mapped_column(nullable=False)
+    date: Mapped[str] = mapped_column(nullable=False)
+    status: Mapped[bool] = mapped_column(nullable=False)
+
+    def __repr__(self):
+        return f"<Task {self.id}>"
     
     
 with app.app_context():
@@ -91,6 +104,7 @@ def register():
         return render_template("register.html")
 
 
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     # clear session id: forget any previous user
@@ -120,12 +134,43 @@ def login():
 
     else:
         return render_template("login.html")
+
+
+@app.route("/logout", methods=["GET", "POST"])
+@login_required
+def logout():
+    session.clear()
+
+    return redirect("/login")
     
 
 @app.route("/")
+@login_required
 def index():
-    return "Welcome to the index page"
+    return render_template("index.html")
 
+
+@app.route("/add_task", methods=["GET", "POST"])
+@login_required
+def add_task():
+    if request.method == "POST":
+        task_name = request.form.get("task_name")
+
+        if not task_name:
+            abort(400, "Invalid Task Name")
+
+        time = datetime.strftime(datetime.now(), "%I:%M %p")
+        date = datetime.strftime(datetime.now(), "%Y-%m-%d")
+
+        new_task = Task(name=task_name, time=time, date=date, status=False)
+        db.session.add(new_task)
+        db.session.commit()
+
+        return redirect("/")
+
+    else:
+        return render_template("add_task.html")
+    
 
 def get_last_user_id():
     last_user_id = db.session.query(func.max(User.id)).scalar()
