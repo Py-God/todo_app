@@ -7,18 +7,26 @@ from flask import (
     render_template,
     session
     )
+from flask_migrate import Migrate
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from helper import login_required
 import re
-from sqlalchemy import func
+from sqlalchemy import func, MetaData
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class Base(DeclarativeBase):
     pass
 
-db = SQLAlchemy(model_class=Base)
+naming_convention = {
+    "ix": 'ix_%(column_0_label)s',
+    "uq": "uq_%(table_name)s_%(column_0_name)s",
+    "ck": "ck_%(table_name)s_%(column_0_name)s",
+    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+    "pk": "pk_%(table_name)s"
+}
+db = SQLAlchemy(metadata=MetaData(naming_convention=naming_convention))
 
 # configure app name
 app = Flask(__name__)
@@ -29,11 +37,14 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///taskhero.db"
 # initialize the app with the extension
 db.init_app(app)
 
+migrate = Migrate(app, db, render_as_batch=True)
+
 class User(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(unique=True, nullable=False)
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(nullable=False)
+    task = db.relationship('Task', backref='user', cascade='all, delete, delete-orphan')
 
     def __repr__(self):
         return f"<User {self.id}>"
@@ -45,6 +56,7 @@ class Task(db.Model):
     time: Mapped[str] = mapped_column(nullable=False)
     date: Mapped[str] = mapped_column(nullable=False)
     status: Mapped[bool] = mapped_column(nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
         return f"<Task {self.id}>"
@@ -147,7 +159,9 @@ def logout():
 @app.route("/")
 @login_required
 def index():
-    return render_template("index.html")
+    tasks = db.session.execute(db.select(Task).order_by(Task.user_id)).scalars()
+
+    return render_template("index.html", tasks=tasks)
 
 
 @app.route("/add_task", methods=["GET", "POST"])
@@ -162,7 +176,7 @@ def add_task():
         time = datetime.strftime(datetime.now(), "%I:%M %p")
         date = datetime.strftime(datetime.now(), "%Y-%m-%d")
 
-        new_task = Task(name=task_name, time=time, date=date, status=False)
+        new_task = Task(name=task_name, time=time, date=date, status=False, user_id=session["user_id"])
         db.session.add(new_task)
         db.session.commit()
 
