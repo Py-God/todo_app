@@ -67,3 +67,12 @@ body {
 a {
     text-decoration: none;
 }
+
+form {
+    display: inline;
+}
+
+button {
+    background-color: #90AEAD;
+    border: none;
+}

@@ -23,13 +23,19 @@
             <span class="task-details"><i>{{ task.time }} | {{ task.date }}</i></span>
 
             <span task-updates>
-                <a href="/edit_task">
-                    <img class="task-updates-images edit" src="/static/images/pencil-square.svg" alt="edit task">
-                </a>
+                <form method="post" action="/edit_task">
+                    <input type="hidden" name="id" value="{{ task.id }}">
+                    <button type="submit">
+                        <img class="task-updates-images edit" src="/static/images/pencil-square.svg" alt="edit task">
+                    </button>
+                </form>
                 |
-                <a href="/delete_task">
-                    <img class="task-updates-images delete" src="/static/images/trash3-fill.svg" alt=" delete task">
-                </a>
+                <form method="post" action="/delete_task">
+                    <input type="hidden" name="id" value="{{ task.id }}">
+                    <button type="submit">
+                        <img class="task-updates-images delete" src="/static/images/trash3-fill.svg" alt=" delete task">
+                    </button>
+                </form>
             </span>
         </li>
 

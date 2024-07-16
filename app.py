@@ -12,7 +12,7 @@ from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from helper import login_required
 import re
-from sqlalchemy import func, MetaData
+from sqlalchemy import desc, func, MetaData
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -159,7 +159,7 @@ def logout():
 @app.route("/")
 @login_required
 def index():
-    tasks = db.session.execute(db.select(Task).order_by(Task.user_id)).scalars()
+    tasks = db.session.execute(db.select(Task).order_by(desc(Task.id))).scalars()
 
     return render_template("index.html", tasks=tasks)
 
@@ -185,6 +185,30 @@ def add_task():
     else:
         return render_template("add_task.html")
     
+
+@app.route("/edit_task", methods=["GET", "POST"])
+@login_required
+def edit_task():
+    if request.method == "POST":
+        ...
+    else:
+        ...
+
+
+@app.route("/delete_task", methods=["GET", "POST"])
+@login_required
+def delete_task():
+    if request.method == "POST":
+        id = request.form.get("id")
+        task = db.one_or_404(db.select(Task).filter_by(id=id))
+
+        db.session.delete(task)
+        db.session.commit()
+
+        return redirect("/")
+    else:
+        abort(404, "Delete task page not found")
+
 
 def get_last_user_id():
     last_user_id = db.session.query(func.max(User.id)).scalar()
