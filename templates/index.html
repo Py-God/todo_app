@@ -16,30 +16,39 @@
 {% block content %}
 
     <ul class="list-group list-group-flush">
-    {% for task in tasks %}
 
-        <li class="list-group-item">
-            <b>{{ task.name }}</b> 
-            <span class="task-details"><i>{{ task.time }} | {{ task.date }}</i></span>
+        {% for date in task_dict %}
 
-            <span task-updates>
-                <form method="post" action="/edit_task">
-                    <input type="hidden" name="id" value="{{ task.id }}">
-                    <button type="submit">
-                        <img class="task-updates-images edit" src="/static/images/pencil-square.svg" alt="edit task">
-                    </button>
-                </form>
-                |
-                <form method="post" action="/delete_task">
-                    <input type="hidden" name="id" value="{{ task.id }}">
-                    <button type="submit">
-                        <img class="task-updates-images delete" src="/static/images/trash3-fill.svg" alt=" delete task">
-                    </button>
-                </form>
-            </span>
-        </li>
+            <h4>{{ date }}</h4>
 
-    {% endfor %}
+            
+            {% for data in task_dict[date] %}
+
+                <li class="list-group-item">
+                    <b>{{ data["name"] }}</b> 
+                    <span class="task-details"><i>{{ data["time"] }} | {{ data["date"] }}</i></span>
+
+                    <span task-updates>
+                        <form method="get" action="/edit_task/{{ data['id'] }}">
+                            <input type="hidden" name="id" value="{{ data['id'] }}">
+                            <button type="submit">
+                                <img class="task-updates-images edit" src="/static/images/pencil-square.svg" alt="edit task">
+                            </button>
+                        </form>
+                        |
+                        <form method="post" action="/delete_task">
+                            <input type="hidden" name="id" value="{{ data['id'] }}">
+                            <button type="submit">
+                                <img class="task-updates-images delete" src="/static/images/trash3-fill.svg" alt=" delete task">
+                            </button>
+                        </form>
+                    </span>
+                </li>
+                
+            {% endfor %}
+            
+        {% endfor %}
+
     </ul>
 
 {% endblock content %}

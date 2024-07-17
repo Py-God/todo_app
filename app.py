@@ -10,7 +10,7 @@ from flask import (
 from flask_migrate import Migrate
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
-from helper import login_required
+from helper import login_required, date
 import re
 from sqlalchemy import desc, func, MetaData
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
@@ -55,7 +55,6 @@ class Task(db.Model):
     name: Mapped[str] = mapped_column(unique=True, nullable=False)
     time: Mapped[str] = mapped_column(nullable=False)
     date: Mapped[str] = mapped_column(nullable=False)
-    status: Mapped[bool] = mapped_column(nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
@@ -158,10 +157,32 @@ def logout():
 
 @app.route("/")
 @login_required
-def index():
+def index():    
     tasks = db.session.execute(db.select(Task).order_by(desc(Task.id))).scalars()
 
-    return render_template("index.html", tasks=tasks)
+    task_dict = {}
+
+    for task in tasks:
+        if not task_dict:
+            task_dict[date(task.date)] = [
+            {
+            "id": task.id,
+            "name": task.name,
+            "time": task.time,
+            "date": task.date
+            }
+        ]
+        else:
+            task_dict[date(task.date)].append(
+                {
+                "id": task.id,
+                "name": task.name,
+                "time": task.time,
+                "date": task.date
+                }
+            )
+
+    return render_template("index.html", task_dict=task_dict)
 
 
 @app.route("/add_task", methods=["GET", "POST"])
@@ -176,7 +197,7 @@ def add_task():
         time = datetime.strftime(datetime.now(), "%I:%M %p")
         date = datetime.strftime(datetime.now(), "%Y-%m-%d")
 
-        new_task = Task(name=task_name, time=time, date=date, status=False, user_id=session["user_id"])
+        new_task = Task(name=task_name, time=time, date=date, user_id=session["user_id"])
         db.session.add(new_task)
         db.session.commit()
 
@@ -186,13 +207,18 @@ def add_task():
         return render_template("add_task.html")
     
 
-@app.route("/edit_task", methods=["GET", "POST"])
+@app.route("/edit_task/<int:id>", methods=["GET", "POST"])
 @login_required
-def edit_task():
+def edit_task(id):
+    task = db.one_or_404(db.select(Task).filter_by(id=id))
+
     if request.method == "POST":
-        ...
+        task.name = request.form.get("task_name")
+        db.session.commit()
+
+        return redirect("/")
     else:
-        ...
+        return render_template("edit_task.html", task=task)
 
 
 @app.route("/delete_task", methods=["GET", "POST"])

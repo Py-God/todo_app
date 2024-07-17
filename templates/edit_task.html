@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+
+
+{% block title %}
+    Edit
+{% endblock title %}
+
+
+
+{% block heading %}
+    <h1>Edit Task</h1>
+{% endblock heading %}
+    
+
+
+{% block content %}
+
+    <form method="post" action="/edit_task/{{ task.id }}">
+        <div class="mb-3">
+            <label for="task-name" class="form-label">Task Name</label>
+            <input name="task_name" value="{{ task.name }}" autocomplete="off" autofocus type="text" class="form-control" id="task-name">
+        </div>
+
+        <button type="submit" class="btn">Update</button>
+    </form>
+
+{% endblock content %}
+    
+    
