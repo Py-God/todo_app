@@ -11,6 +11,7 @@ from flask_migrate import Migrate
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from helper import login_required, date
+import logging
 import re
 from sqlalchemy import desc, func, MetaData
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
@@ -165,25 +166,10 @@ def index():
     task_dict = {}
 
     for task in tasks:
-        for t in task_dict:
-            if date(task.date) == t:
-                task_dict[date(task.date)].append(
-                {
-                "id": task.id,
-                "name": task.name,
-                "time": task.time,
-                "date": task.date
-                }
-            )
+        if date(task.date) in task_dict:
+            task_dict[date(task.date)].append(task)
         else:
-            task_dict[date(task.date)] = [
-            {
-            "id": task.id,
-            "name": task.name,
-            "time": task.time,
-            "date": task.date
-            }
-        ]
+            task_dict[date(task.date)] = [task]
 
     return render_template("index.html", task_dict=task_dict, user=user)
 
