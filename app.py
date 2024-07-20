@@ -160,10 +160,22 @@ def logout():
 def index():    
     tasks = db.session.execute(db.select(Task).order_by(desc(Task.id))).scalars()
 
+    user = User.query.filter_by(id=session["user_id"]).first()
+
     task_dict = {}
 
     for task in tasks:
-        if not task_dict:
+        for t in task_dict:
+            if date(task.date) == t:
+                task_dict[date(task.date)].append(
+                {
+                "id": task.id,
+                "name": task.name,
+                "time": task.time,
+                "date": task.date
+                }
+            )
+        else:
             task_dict[date(task.date)] = [
             {
             "id": task.id,
@@ -172,17 +184,8 @@ def index():
             "date": task.date
             }
         ]
-        else:
-            task_dict[date(task.date)].append(
-                {
-                "id": task.id,
-                "name": task.name,
-                "time": task.time,
-                "date": task.date
-                }
-            )
 
-    return render_template("index.html", task_dict=task_dict)
+    return render_template("index.html", task_dict=task_dict, user=user)
 
 
 @app.route("/add_task", methods=["GET", "POST"])

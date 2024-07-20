@@ -68,11 +68,28 @@ a {
     text-decoration: none;
 }
 
-form {
+form{
     display: inline;
 }
 
 button {
     background-color: #90AEAD;
     border: none;
+}
+
+.username {
+    text-align: center;
+}
+
+.username {
+    display: flex;
+    justify-content: center;
+}
+
+.edit-username-img {
+    background-color: #874f41;
+}
+
+.date {
+    margin-top: 10px;
 }

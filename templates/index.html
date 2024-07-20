@@ -6,11 +6,21 @@
 {% endblock title %}
 
 
-
 {% block heading %}
+
+    <div class="username">
+        <p>{{ user.username }}</p>
+
+        <form action="/edit_username" method="post" >
+            <button class="edit-username-img" type="submit">
+                <img src="/static/images/pen-fill.svg" alt="edit task">
+            </button>
+        </form> 
+    </div>
+
     <h1>Tasks <a href="/add_task"><img id="add-task" src="/static/images/plus-circle.svg" alt="Add Task"></a></h1>
-{% endblock heading %}
-    
+
+{% endblock heading %}    
 
 
 {% block content %}
@@ -19,7 +29,7 @@
 
         {% for date in task_dict %}
 
-            <h4>{{ date }}</h4>
+            <h4 class="date">{{ date }}</h4>
 
             
             {% for data in task_dict[date] %}
