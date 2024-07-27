@@ -9,13 +9,24 @@
 {% block heading %}
 
     <div class="username">
-        <p>{{ user.username }}</p>
+        <div class="username-display">
+            <p>{{ user.username }}</p>
 
-        <form action="/edit_username" method="post" >
-            <button class="edit-username-img" type="submit">
-                <img src="/static/images/pen-fill.svg" alt="edit task">
+            <button id="edit-username-img" >
+                <img src="/static/images/pen-fill.svg" alt="edit username">
             </button>
-        </form> 
+        </div>
+
+        <div class="change-username">
+            <form action="/change_username" method="post" class="row g-2">
+                <div class="col-auto">
+                    <input type="text" name="new_username" class="form-control" id="new-username-field" placeholder="New Username">
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn mb-3">Change Username</button>
+                </div>
+        </form>
+        </div>
     </div>
 
     <h1>Tasks <a href="/add_task"><img id="add-task" src="/static/images/plus-circle.svg" alt="Add Task"></a></h1>
@@ -61,5 +72,28 @@
     </ul>
 
 {% endblock content %}
+
+
+{% block script %}
+    
+    <script>
+        function toggleEditUsernameField() {
+            var editUsernameButton = document.getElementById('edit-username-img');
+            var changeUsernameForm = document.querySelector('.change-username');
+            
+            editUsernameButton.addEventListener("click", function(){
+                if (changeUsernameForm.style.display === "none") {
+                    changeUsernameForm.style.display = 'flex';
+                } else {
+                    changeUsernameForm.style.display = 'none';
+                }
+            })
+        }
+
+        toggleEditUsernameField()
+    </script>
+
+{% endblock script %}
+    
     
     

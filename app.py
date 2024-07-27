@@ -225,6 +225,26 @@ def delete_task():
         abort(404, "Delete task page not found")
 
 
+@app.route("/change_username", methods=["GET", "POST"])
+@login_required
+def change_username():
+    user = db.one_or_404(db.select(User).filter_by(id=session["user_id"]))
+
+    if request.method == "POST":
+        new_username = request.form.get("new_username")
+
+        already_exists = User.query.filter_by(username=new_username).first()
+        if already_exists and already_exists.id != session["user_id"]:
+            abort(400, "This username is not available")
+
+        user.username = request.form.get("new_username")
+        db.session.commit()
+
+        return redirect("/")
+    else:
+        abort(400, "Change Username does not have a get method")
+
+
 def get_last_user_id():
     last_user_id = db.session.query(func.max(User.id)).scalar()
     if last_user_id is None:

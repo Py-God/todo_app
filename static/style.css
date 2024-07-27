@@ -78,16 +78,23 @@ button {
 }
 
 .username {
-    text-align: center;
+    display: grid;
 }
 
-.username {
+.username-display {
     display: flex;
     justify-content: center;
 }
 
-.edit-username-img {
+.change-username {
+    display: none;
+    justify-content: center;
+}
+
+#edit-username-img {
     background-color: #874f41;
+    width: 10px;
+    height: 10px;
 }
 
 .date {
