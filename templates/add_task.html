@@ -6,21 +6,20 @@
 {% endblock title %}
 
 
-
 {% block heading %}
     <h1>Add Task</h1>
 {% endblock heading %}
-    
 
 
 {% block content %}
 
+    <!-- add task form -->
     <form method="post" action="/add_task">
         <div class="mb-3">
             <label for="task-name" class="form-label">Task Name</label>
             <input name="task_name" autocomplete="off" autofocus type="text" class="form-control" id="task-name">
         </div>
-
+        
         <button type="submit" class="btn">Add</button>
     </form>
 

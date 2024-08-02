@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from flask import redirect, session
 from functools import wraps
 
+# prevents foreign user from entering page without loggin in
 def login_required(f):
 
     @wraps(f)
@@ -13,6 +14,7 @@ def login_required(f):
     return decorated_function
 
 
+# return date in a particular format
 def date(input_date):
     formatted_date = datetime.strptime(input_date, "%Y-%m-%d").date()
     now = datetime.now().date()

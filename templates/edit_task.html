@@ -6,15 +6,14 @@
 {% endblock title %}
 
 
-
 {% block heading %}
     <h1>Edit Task</h1>
 {% endblock heading %}
-    
 
 
 {% block content %}
 
+    <!-- edit task form -->
     <form method="post" action="/edit_task/{{ task.id }}">
         <div class="mb-3">
             <label for="task-name" class="form-label">Task Name</label>

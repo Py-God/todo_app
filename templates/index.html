@@ -8,15 +8,18 @@
 
 {% block heading %}
 
+    <!-- username display field -->
     <div class="username">
         <div class="username-display">
             <p>{{ user.username }}</p>
-
+            
+            <!-- edit button -->
             <button id="edit-username-img" >
                 <img src="/static/images/pen-fill.svg" alt="edit username">
             </button>
         </div>
 
+        <!-- change username form -->
         <div class="change-username">
             <form action="/change_username" method="post" class="row g-2">
                 <div class="col-auto">
@@ -29,6 +32,7 @@
         </div>
     </div>
 
+    <!-- add task button -->
     <h1>Tasks <a href="/add_task"><img id="add-task" src="/static/images/plus-circle.svg" alt="Add Task"></a></h1>
 
 {% endblock heading %}    
@@ -36,6 +40,7 @@
 
 {% block content %}
 
+    <!-- task list -->
     <ul class="list-group list-group-flush">
 
         {% for date in task_dict %}
@@ -49,6 +54,7 @@
                     <b>{{ data["name"] }}</b> 
                     <span class="task-details"><i>{{ data["time"] }} | {{ data["date"] }}</i></span>
 
+                    <!-- edit and delete task buttons -->
                     <span task-updates>
                         <form method="get" action="/edit_task/{{ data['id'] }}">
                             <input type="hidden" name="id" value="{{ data['id'] }}">
@@ -76,16 +82,17 @@
 
 {% block script %}
     
+    <!-- javascript to toggle edit username form -->
     <script>
         function toggleEditUsernameField() {
             var editUsernameButton = document.getElementById('edit-username-img');
             var changeUsernameForm = document.querySelector('.change-username');
             
             editUsernameButton.addEventListener("click", function(){
-                if (changeUsernameForm.style.display === "none") {
-                    changeUsernameForm.style.display = 'flex';
+                if (changeUsernameForm.classList.contains('show')) {
+                    changeUsernameForm.classList.remove('show');
                 } else {
-                    changeUsernameForm.style.display = 'none';
+                    changeUsernameForm.classList.add('show');
                 }
             })
         }
